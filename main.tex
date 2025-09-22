@@ -1,0 +1,505 @@
+\documentclass[12pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[french]{babel}
+\usepackage{geometry}
+\usepackage{tikz}
+\usepackage{xcolor}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{hyperref}
+\usepackage{array}
+
+% Définitions pour les diagrammes UML
+\usetikzlibrary{shapes,arrows,positioning,calc,backgrounds}
+
+\geometry{margin=2cm}
+
+\title{\textbf{Architecture Microservices de DeepSeek} \\ 
+       \large Modélisation UML d'une Plateforme d'Intelligence Artificielle}
+\author{Architecture Système}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+\tableofcontents
+\newpage
+
+\section{Introduction}
+
+Cette document présente l'architecture microservices hypothétique de DeepSeek, une plateforme d'intelligence artificielle avancée. L'architecture est conçue pour supporter la scalabilité, la haute disponibilité et la performance nécessaires pour les workloads d'IA modernes.
+
+\section{Vue d'ensemble de l'Architecture}
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[scale=0.8]
+    % Gateway Layer
+    \draw[fill=blue!20, rounded corners] (0,8) rectangle (12,9.5);
+    \node at (6,8.75) {\textbf{API Gateway \& Load Balancer}};
+    
+    % Authentication Layer
+    \draw[fill=green!20, rounded corners] (0,6.5) rectangle (4,7.5);
+    \node at (2,7) {\textbf{Auth Service}};
+    
+    \draw[fill=green!20, rounded corners] (4.5,6.5) rectangle (8.5,7.5);
+    \node at (6.5,7) {\textbf{User Management}};
+    
+    % Core AI Services
+    \draw[fill=orange!20, rounded corners] (0,4.5) rectangle (3,5.5);
+    \node at (1.5,5) {\textbf{Model Service}};
+    
+    \draw[fill=orange!20, rounded corners] (3.5,4.5) rectangle (6.5,5.5);
+    \node at (5,5) {\textbf{Inference Engine}};
+    
+    \draw[fill=orange!20, rounded corners] (7,4.5) rectangle (10,5.5);
+    \node at (8.5,5) {\textbf{Training Service}};
+    
+    \draw[fill=orange!20, rounded corners] (10.5,4.5) rectangle (13.5,5.5);
+    \node at (12,5) {\textbf{Fine-tuning}};
+    
+    % Data Services
+    \draw[fill=purple!20, rounded corners] (0,2.5) rectangle (3,3.5);
+    \node at (1.5,3) {\textbf{Data Pipeline}};
+    
+    \draw[fill=purple!20, rounded corners] (3.5,2.5) rectangle (6.5,3.5);
+    \node at (5,3) {\textbf{Vector DB}};
+    
+    \draw[fill=purple!20, rounded corners] (7,2.5) rectangle (10,3.5);
+    \node at (8.5,3) {\textbf{Cache Service}};
+    
+    % Infrastructure Services
+    \draw[fill=red!20, rounded corners] (0,0.5) rectangle (3,1.5);
+    \node at (1.5,1) {\textbf{Monitoring}};
+    
+    \draw[fill=red!20, rounded corners] (3.5,0.5) rectangle (6.5,1.5);
+    \node at (5,1) {\textbf{Logging}};
+    
+    \draw[fill=red!20, rounded corners] (7,0.5) rectangle (10,1.5);
+    \node at (8.5,1) {\textbf{Configuration}};
+    
+    \draw[fill=red!20, rounded corners] (10.5,0.5) rectangle (13.5,1.5);
+    \node at (12,1) {\textbf{Service Discovery}};
+    
+    % Arrows
+    \draw[->] (6,8) -- (2,7.5);
+    \draw[->] (6,8) -- (6.5,7.5);
+    \draw[->] (2,6.5) -- (1.5,5.5);
+    \draw[->] (6.5,6.5) -- (5,5.5);
+    \draw[->] (6.5,6.5) -- (8.5,5.5);
+    \draw[->] (1.5,4.5) -- (1.5,3.5);
+    \draw[->] (5,4.5) -- (5,3.5);
+    \draw[->] (8.5,4.5) -- (8.5,3.5);
+    
+\end{tikzpicture}
+\caption{Vue d'ensemble de l'architecture microservices DeepSeek}
+\end{figure}
+
+\section{Diagramme de Composants UML}
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[
+    component/.style={rectangle, draw=black, fill=blue!20, minimum width=4.5cm, minimum height=3cm, align=center, text width=4cm},
+    dependency/.style={->, dashed, thick, blue}
+]
+    % Couche API Gateway
+    \node[component] (api) at (0,9) {
+        \textbf{APIGateway}\\[0.3cm]
+        \textit{Attributs:}\\
+        - routes: Map\\
+        - rateLimiter: RateLimiter\\[0.2cm]
+        \textit{Méthodes:}\\
+        + routeRequest()\\
+        + authenticate()
+    };
+    
+    \node[component] (auth) at (6,9) {
+        \textbf{AuthService}\\[0.3cm]
+        \textit{Attributs:}\\
+        - tokenManager: TokenManager\\
+        - sessionStore: SessionStore\\[0.2cm]
+        \textit{Méthodes:}\\
+        + validateToken()\\
+        + login()
+    };
+    
+    % Couche Services Core
+    \node[component] (model) at (-3,5) {
+        \textbf{ModelService}\\[0.3cm]
+        \textit{Attributs:}\\
+        - modelRepository: Repository\\
+        - modelCache: Cache\\[0.2cm]
+        \textit{Méthodes:}\\
+        + loadModel()\\
+        + getModelInfo()
+    };
+    
+    \node[component] (inference) at (3,5) {
+        \textbf{InferenceEngine}\\[0.3cm]
+        \textit{Attributs:}\\
+        - inferenceQueue: Queue\\
+        - gpuManager: GPUManager\\[0.2cm]
+        \textit{Méthodes:}\\
+        + processInference()\\
+        + scheduleInference()
+    };
+    
+    \node[component] (training) at (9,5) {
+        \textbf{TrainingService}\\[0.3cm]
+        \textit{Attributs:}\\
+        - trainingQueue: Queue\\
+        - checkpointManager: Manager\\[0.2cm]
+        \textit{Méthodes:}\\
+        + startTraining()\\
+        + monitorTraining()
+    };
+    
+    % Couche Data
+    \node[component] (pipeline) at (-3,1) {
+        \textbf{DataPipeline}\\[0.3cm]
+        \textit{Attributs:}\\
+        - dataIngester: Ingester\\
+        - dataTransformer: Transformer\\[0.2cm]
+        \textit{Méthodes:}\\
+        + ingestData()\\
+        + transformData()
+    };
+    
+    \node[component] (vector) at (3,1) {
+        \textbf{VectorDatabase}\\[0.3cm]
+        \textit{Attributs:}\\
+        - indexManager: IndexManager\\
+        - searchEngine: SearchEngine\\[0.2cm]
+        \textit{Méthodes:}\\
+        + storeVector()\\
+        + searchSimilar()
+    };
+    
+    \node[component] (cache) at (9,1) {
+        \textbf{CacheService}\\[0.3cm]
+        \textit{Attributs:}\\
+        - memoryCache: MemoryCache\\
+        - redisCache: RedisCache\\[0.2cm]
+        \textit{Méthodes:}\\
+        + get()\\
+        + set()
+    };
+    
+    % Dependencies
+    \draw[dependency] (api.east) -- (auth.west);
+    \draw[dependency] (api.south) -- (model.north);
+    \draw[dependency] (api.south) -- (inference.north);
+    \draw[dependency] (inference.west) -- (model.east);
+    \draw[dependency] (inference.east) -- (training.west);
+    \draw[dependency] (inference.south) -- (vector.north);
+    \draw[dependency] (training.south) -- (cache.north);
+    \draw[dependency] (training.south west) -- (pipeline.north east);
+    \draw[dependency] (model.south) -- (pipeline.north);
+    
+\end{tikzpicture}
+\caption{Diagramme de composants UML - Services principaux}
+\end{figure}
+
+\section{Diagramme de Déploiement}
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[scale=0.8]
+    % Kubernetes Cluster
+    \draw[thick, rounded corners] (0,0) rectangle (14,10);
+    \node at (7,9.5) {\textbf{Cluster Kubernetes DeepSeek}};
+    
+    % Namespace: Gateway
+    \draw[fill=blue!10, rounded corners] (0.5,8) rectangle (6,9);
+    \node at (3.25,8.5) {\textbf{Namespace: gateway}};
+    \draw[fill=blue!30, rounded corners] (1,7.5) rectangle (2.5,7.8);
+    \node[font=\tiny] at (1.75,7.65) {API Gateway Pod};
+    \draw[fill=blue!30, rounded corners] (3,7.5) rectangle (4.5,7.8);
+    \node[font=\tiny] at (3.75,7.65) {Load Balancer Pod};
+    
+    % Namespace: Auth
+    \draw[fill=green!10, rounded corners] (6.5,8) rectangle (13.5,9);
+    \node at (10,8.5) {\textbf{Namespace: auth}};
+    \draw[fill=green!30, rounded corners] (7,7.5) rectangle (8.5,7.8);
+    \node[font=\tiny] at (7.75,7.65) {Auth Service Pod};
+    \draw[fill=green!30, rounded corners] (9,7.5) rectangle (10.5,7.8);
+    \node[font=\tiny] at (9.75,7.65) {User Mgmt Pod};
+    \draw[fill=green!30, rounded corners] (11,7.5) rectangle (12.5,7.8);
+    \node[font=\tiny] at (11.75,7.65) {Session Store};
+    
+    % Namespace: AI
+    \draw[fill=orange!10, rounded corners] (0.5,5.5) rectangle (13.5,7);
+    \node at (7,6.75) {\textbf{Namespace: ai-services}};
+    \draw[fill=orange!30, rounded corners] (1,6) rectangle (2.5,6.3);
+    \node[font=\tiny] at (1.75,6.15) {Model Service};
+    \draw[fill=orange!30, rounded corners] (3,6) rectangle (4.5,6.3);
+    \node[font=\tiny] at (3.75,6.15) {Inference Engine};
+    \draw[fill=orange!30, rounded corners] (5,6) rectangle (6.5,6.3);
+    \node[font=\tiny] at (5.75,6.15) {Training Service};
+    \draw[fill=orange!30, rounded corners] (7,6) rectangle (8.5,6.3);
+    \node[font=\tiny] at (7.75,6.15) {Fine-tuning};
+    \draw[fill=orange!30, rounded corners] (9,6) rectangle (12,6.3);
+    \node[font=\tiny] at (10.5,6.15) {GPU Worker Nodes};
+    
+    % Namespace: Data
+    \draw[fill=purple!10, rounded corners] (0.5,3.5) rectangle (13.5,5);
+    \node at (7,4.75) {\textbf{Namespace: data-services}};
+    \draw[fill=purple!30, rounded corners] (1,4) rectangle (2.5,4.3);
+    \node[font=\tiny] at (1.75,4.15) {Data Pipeline};
+    \draw[fill=purple!30, rounded corners] (3,4) rectangle (4.5,4.3);
+    \node[font=\tiny] at (3.75,4.15) {Vector DB};
+    \draw[fill=purple!30, rounded corners] (5,4) rectangle (6.5,4.3);
+    \node[font=\tiny] at (5.75,4.15) {Cache Service};
+    \draw[fill=purple!30, rounded corners] (7,4) rectangle (8.5,4.3);
+    \node[font=\tiny] at (7.75,4.15) {Data Storage};
+    \draw[fill=purple!30, rounded corners] (9,4) rectangle (12,4.3);
+    \node[font=\tiny] at (10.5,4.15) {Message Queue};
+    
+    % Namespace: Infrastructure
+    \draw[fill=red!10, rounded corners] (0.5,1.5) rectangle (13.5,3);
+    \node at (7,2.75) {\textbf{Namespace: infrastructure}};
+    \draw[fill=red!30, rounded corners] (1,2) rectangle (2.5,2.3);
+    \node[font=\tiny] at (1.75,2.15) {Monitoring};
+    \draw[fill=red!30, rounded corners] (3,2) rectangle (4.5,2.3);
+    \node[font=\tiny] at (3.75,2.15) {Logging};
+    \draw[fill=red!30, rounded corners] (5,2) rectangle (6.5,2.3);
+    \node[font=\tiny] at (5.75,2.15) {Config Service};
+    \draw[fill=red!30, rounded corners] (7,2) rectangle (8.5,2.3);
+    \node[font=\tiny] at (7.75,2.15) {Service Discovery};
+    \draw[fill=red!30, rounded corners] (9,2) rectangle (12,2.3);
+    \node[font=\tiny] at (10.5,2.15) {Health Check};
+    
+    % External Services
+    \draw[fill=gray!20, rounded corners] (0.5,0.2) rectangle (4,1);
+    \node at (2.25,0.6) {\textbf{Services Externes}};
+    \draw[fill=gray!40, rounded corners] (5,0.2) rectangle (7,1);
+    \node[font=\tiny] at (6,0.6) {Base de données\\PostgreSQL};
+    \draw[fill=gray!40, rounded corners] (7.5,0.2) rectangle (9.5,1);
+    \node[font=\tiny] at (8.5,0.6) {Object Storage\\S3/MinIO};
+    \draw[fill=gray!40, rounded corners] (10,0.2) rectangle (12,1);
+    \node[font=\tiny] at (11,0.6) {Message Broker\\Apache Kafka};
+    
+\end{tikzpicture}
+\caption{Diagramme de déploiement Kubernetes}
+\end{figure}
+
+\section{Diagramme de Séquence - Traitement d'une Requête d'Inférence}
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[scale=0.8, transform shape]
+
+% Actors and Objects
+\node (client) at (0,8) {Client};
+\node (gateway) at (2.5,8) {API Gateway};
+\node (auth) at (5,8) {Auth Service};
+\node (inference) at (7.5,8) {Inference Service};
+\node (cache) at (10,8) {Cache};
+\node (model) at (12.5,8) {Model Engine};
+
+% Lifelines
+\draw[dashed] (client) -- (0,0);
+\draw[dashed] (gateway) -- (2.5,0);
+\draw[dashed] (auth) -- (5,0);
+\draw[dashed] (inference) -- (7.5,0);
+\draw[dashed] (cache) -- (10,0);
+\draw[dashed] (model) -- (12.5,0);
+
+% Messages
+\draw[->] (0,7.5) -- (2.5,7.3) node[midway, above] {HTTP Request};
+\draw[->] (2.5,7) -- (5,6.8) node[midway, above] {Validate Token};
+\draw[->] (5,6.5) -- (2.5,6.3) node[midway, above] {Auth Success};
+\draw[->] (2.5,6) -- (7.5,5.8) node[midway, above] {Forward Request};
+\draw[->] (7.5,5.5) -- (10,5.3) node[midway, above] {Check Cache};
+\draw[->] (10,5) -- (7.5,4.8) node[midway, above] {Cache Miss};
+\draw[->] (7.5,4.5) -- (12.5,4.3) node[midway, above] {Process Inference};
+\draw[->] (12.5,4) -- (7.5,3.8) node[midway, above] {Result};
+\draw[->] (7.5,3.5) -- (10,3.3) node[midway, above] {Store in Cache};
+\draw[->] (7.5,3) -- (2.5,2.8) node[midway, above] {Response};
+\draw[->] (2.5,2.5) -- (0,2.3) node[midway, above] {HTTP Response};
+
+% Activation boxes
+\draw[fill=yellow!20] (2.4,7.5) rectangle (2.6,2.3);
+\draw[fill=green!20] (4.9,7) rectangle (5.1,6.3);
+\draw[fill=blue!20] (7.4,6) rectangle (7.6,2.8);
+\draw[fill=red!20] (9.9,5.5) rectangle (10.1,3.3);
+\draw[fill=purple!20] (12.4,4.5) rectangle (12.6,3.8);
+
+% Time labels
+\node[rotate=90] at (-0.5,4) {Time};
+\draw[->] (-0.3,7.5) -- (-0.3,2.3);
+
+\end{tikzpicture}
+\caption{Sequence Diagram - Inference Request Processing Flow}
+\label{fig:sequence}
+\end{figure}
+
+\section{Diagramme d'Activité - Pipeline de Training}
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[
+    start/.style={ellipse, draw, fill=green!30, minimum width=1.5cm},
+    activity/.style={rectangle, draw, fill=blue!20, minimum width=2.5cm, minimum height=0.8cm, rounded corners},
+    decision/.style={diamond, draw, fill=yellow!30, minimum width=1.5cm, minimum height=1.5cm, aspect=2},
+    end/.style={ellipse, draw, fill=red!30, minimum width=1.5cm}
+]
+    % Nodes
+    \node[start] (start) at (0,8) {Début};
+    \node[activity] (validate) at (0,6.5) {Valider Dataset};
+    \node[activity] (prepare) at (0,5) {Préparer Données};
+    \node[activity] (init) at (0,3.5) {Initialiser Training};
+    \node[activity] (train) at (0,2) {Entraîner Modèle};
+    \node[decision] (converged) at (3.5,2) {Convergé?};
+    \node[activity] (checkpoint) at (3.5,0.5) {Sauvegarder\\Checkpoint};
+    \node[activity] (evaluate) at (7,2) {Évaluer\\Modèle};
+    \node[activity] (deploy) at (7,0.5) {Déployer\\Modèle};
+    \node[end] (end) at (7,4) {Fin};
+    
+    % Arrows
+    \draw[->] (start) -- (validate);
+    \draw[->] (validate) -- (prepare);
+    \draw[->] (prepare) -- (init);
+    \draw[->] (init) -- (train);
+    \draw[->] (train) -- (converged);
+    \draw[->] (converged) -- node[right] {Non} (checkpoint);
+    \draw[->] (checkpoint) -- (-1.5,0.5) -- (-1.5,2) -- (train);
+    \draw[->] (converged) -- node[above] {Oui} (evaluate);
+    \draw[->] (evaluate) -- (deploy);
+    \draw[->] (deploy) -- (7,4) -- (end);
+    
+\end{tikzpicture}
+\caption{Pipeline de training des modèles}
+\end{figure}
+
+\section{Patterns Architecturaux Utilisés}
+
+\subsection{Microservices}
+L'architecture est basée sur le pattern microservices pour assurer:
+\begin{itemize}
+    \item \textbf{Scalabilité}: Chaque service peut être scalé indépendamment
+    \item \textbf{Résilience}: La panne d'un service n'affecte pas les autres
+    \item \textbf{Déployabilité}: Déploiements indépendants et fréquents
+    \item \textbf{Technology Diversity}: Choix de technologies adaptées par service
+\end{itemize}
+
+\subsection{API Gateway}
+Centralise la gestion des requêtes avec:
+\begin{itemize}
+    \item Authentification et autorisation
+    \item Rate limiting et throttling
+    \item Load balancing
+    \item Monitoring et logging
+\end{itemize}
+
+\subsection{CQRS et Event Sourcing}
+Séparation des opérations de lecture et d'écriture pour optimiser les performances.
+
+\subsection{Circuit Breaker}
+Protection contre les cascades de pannes avec des mécanismes de fallback.
+
+\section{Technologies Utilisées}
+
+\begin{table}[H]
+\centering
+\begin{tabular}{|l|l|l|}
+\hline
+\textbf{Couche} & \textbf{Technologie} & \textbf{Usage} \\
+\hline
+Orchestration & Kubernetes & Déploiement et gestion des containers \\
+\hline
+API Gateway & Kong/Envoy & Routage et sécurité des APIs \\
+\hline
+Services & Python/Go & Logique métier des microservices \\
+\hline
+Base de données & PostgreSQL & Données relationnelles \\
+\hline
+Cache & Redis & Cache distribué \\
+\hline
+Message Queue & Apache Kafka & Communication asynchrone \\
+\hline
+Vector DB & Milvus/Pinecone & Stockage et recherche vectorielle \\
+\hline
+Monitoring & Prometheus/Grafana & Surveillance et métriques \\
+\hline
+Logging & ELK Stack & Agrégation et analyse des logs \\
+\hline
+Storage & MinIO/S3 & Stockage d'objets \\
+\hline
+\end{tabular}
+\caption{Stack technologique}
+\end{table}
+
+\section{Scalabilité et Performance}
+
+\subsection{Stratégies de Scalabilité}
+\begin{itemize}
+    \item \textbf{Horizontal Scaling}: Auto-scaling basé sur la charge CPU/mémoire
+    \item \textbf{GPU Scaling}: Allocation dynamique des ressources GPU
+    \item \textbf{Database Sharding}: Partitionnement des données par tenant
+    \item \textbf{CDN}: Distribution géographique du contenu statique
+\end{itemize}
+
+\subsection{Optimisations Performance}
+\begin{itemize}
+    \item Cache multi-niveaux (L1: In-memory, L2: Redis)
+    \item Pré-chargement des modèles fréquemment utilisés
+    \item Batch processing pour les requêtes d'inférence
+    \item Compression des modèles et quantization
+\end{itemize}
+
+\section{Sécurité}
+
+\subsection{Authentification et Autorisation}
+\begin{itemize}
+    \item OAuth 2.0 / JWT pour l'authentification
+    \item RBAC (Role-Based Access Control)
+    \item API Keys pour les intégrations
+    \item mTLS entre microservices
+\end{itemize}
+
+\subsection{Sécurité des Données}
+\begin{itemize}
+    \item Chiffrement end-to-end
+    \item Vault pour la gestion des secrets
+    \item Network policies Kubernetes
+    \item Audit logging complet
+\end{itemize}
+
+\section{Monitoring et Observabilité}
+
+\subsection{Métriques Clés}
+\begin{itemize}
+    \item \textbf{Business}: Requêtes/sec, latence p95, taux d'erreur
+    \item \textbf{Technique}: CPU, mémoire, GPU utilisation
+    \item \textbf{Modèles}: Accuracy, drift detection, performance
+\end{itemize}
+
+\subsection{Alerting}
+Configuration d'alertes pour:
+\begin{itemize}
+    \item Dégradation de performance
+    \item Erreurs critiques
+    \item Ressources insuffisantes
+    \item Anomalies de sécurité
+\end{itemize}
+
+\section{Conclusion}
+
+Cette architecture microservices pour DeepSeek offre:
+
+\begin{itemize}
+    \item \textbf{Haute disponibilité}: 99.9\% uptime grâce à la redondance
+    \item \textbf{Scalabilité élastique}: Auto-scaling basé sur la demande
+    \item \textbf{Performance optimale}: Cache intelligent et GPU management
+    \item \textbf{Sécurité robuste}: Authentification, chiffrement, audit
+    \item \textbf{Maintenabilité}: Code modulaire et déploiements indépendants
+\end{itemize}
+
+L'architecture peut évoluer pour intégrer de nouveaux modèles d'IA, supporter plus d'utilisateurs et s'adapter aux besoins futurs de la plateforme.
+
+\end{document}
