@@ -6,8 +6,8 @@ Ce projet présente l'architecture microservices hypothétique de DeepSeek, une 
 
 ## 📊 Documents Disponibles
 
-- **Version Initiale** : `deepseek_architecture_v1.tex` - Architecture de base
-- **Version Améliorée** : `deepseek_architecture_v2.tex` - Architecture optimisée
+- **Version Initiale** : `main.tex` - Architecture de base
+- **Version Améliorée** : `main-version-ameliorer.tex` - Architecture optimisée
 
 ## 🔄 Évolution de l'Architecture - Changements Apportés
 
